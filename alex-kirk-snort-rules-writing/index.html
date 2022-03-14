@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<base href="https://bsidesorlando.org/2014" />
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<title>Alex Kirk &#8211; Snort Rules Writing | Security B-Sides Orlando - April 5-6 2014</title>
+<link rel="pingback" href="https://bsidesorlando.org/2014/xmlrpc.php">
+<link rel="stylesheet" type="text/css" media="all" href="https://bsidesorlando.org/2014/wp-content/themes/hannari/style.css" />
+
+<!-- All in One SEO Pack 2.2.7.2 by Michael Torbert of Semper Fi Web Design[181,228] -->
+<meta name="description"  content="Bio Alex Kirk is a Security Engineer for Sourcefire (now a part of Cisco) covering the southeast US. Previously, he spent 9.5 years with the company's" />
+
+<link rel="canonical" href="https://bsidesorlando.org/2014/alex-kirk-snort-rules-writing" />
+		<script type="text/javascript">
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-45473442-1']);
+		  _gaq.push(['_trackPageview']);
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		</script>
+<!-- /all in one seo pack -->
+<link rel="alternate" type="application/rss+xml" title="Security B-Sides Orlando - April 5-6 2014 &raquo; Feed" href="https://bsidesorlando.org/2014/feed" />
+<link rel="alternate" type="application/rss+xml" title="Security B-Sides Orlando - April 5-6 2014 &raquo; Comments Feed" href="https://bsidesorlando.org/2014/comments/feed" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"http:\/\/s.w.org\/images\/core\/emoji\/72x72\/","ext":".png","source":{"concatemoji":"http:\/\/bsidesorlando.org\/2014\/wp-includes\/js\/wp-emoji-release.min.js?ver=1ee343cf2a70150643addf3e600b61a4"}};
+			!function(a,b,c){function d(a){var c=b.createElement("canvas"),d=c.getContext&&c.getContext("2d");return d&&d.fillText?(d.textBaseline="top",d.font="600 32px Arial","flag"===a?(d.fillText(String.fromCharCode(55356,56812,55356,56807),0,0),c.toDataURL().length>3e3):(d.fillText(String.fromCharCode(55357,56835),0,0),0!==d.getImageData(16,16,1,1).data[0])):!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g;c.supports={simple:d("simple"),flag:d("flag")},c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.simple&&c.supports.flag||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='theme-my-login-css'  href='https://bsidesorlando.org/2014/wp-content/plugins/theme-my-login/theme-my-login.css?ver=6.3.12' type='text/css' media='all' />
+<link rel='stylesheet' id='theme-my-login-ajax-css'  href='https://bsidesorlando.org/2014/wp-content/plugins/theme-my-login/modules/ajax/css/ajax.css?ver=1ee343cf2a70150643addf3e600b61a4' type='text/css' media='all' />
+<script type='text/javascript' src='https://bsidesorlando.org/2014/wp-includes/js/jquery/jquery.js?ver=1.11.3'></script>
+<script type='text/javascript' src='https://bsidesorlando.org/2014/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.2.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var wpAjax = {"noPerm":"You do not have permission to do that.","broken":"An unidentified error has occurred."};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://bsidesorlando.org/2014/wp-includes/js/wp-ajax-response.min.js?ver=1ee343cf2a70150643addf3e600b61a4'></script>
+<script type='text/javascript' src='https://bsidesorlando.org/2014/wp-content/plugins/theme-my-login/modules/ajax/js/ajax.js?ver=1ee343cf2a70150643addf3e600b61a4'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://bsidesorlando.org/2014/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://bsidesorlando.org/2014/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Kevin Johnson &#8211; Securing our Ethics: Ethics and Privacy in a Target-Rich Environment' href='https://bsidesorlando.org/2014/kevin-johnson-securing-our-ethics-ethics-and-privacy-in-a-target-rich-environment' />
+<link rel='next' title='Keith Perry &#8211; Roll Your Own Internet of Things Search Engine' href='https://bsidesorlando.org/2014/keith-perry-roll-your-own-internet-of-things-search-engine' />
+
+<link rel='shortlink' href='https://bsidesorlando.org/2014/?p=343' />
+<!-- Custom Styling -->
+<style type="text/css">
+.menu ul{width: 100%}
+
+@media only screen and (max-width: 1024px) {.usr {border-left:0;padding-left:0}}
+@media only screen and (min-width: 769px)
+</style>
+</head>
+<body class="single single-post postid-343 single-format-standard">
+	<div id="wrapper">
+		<div id="header">
+			<div class="center">
+								   <a class="logo" href="https://bsidesorlando.org/2014/"><img src="https://bsidesorlando.org/2014/wp-content/uploads/2013/11/Banner.png" /></a>
+								<div class="clear">&nbsp;</div>
+				<div class="menuwrapp">
+				    <div class="menubartop"></div>
+				    					   <ul class="menu"><li id="menu-item-16" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-16"><a href="https://bsidesorlando.org/2014/">Home</a></li>
+<li id="menu-item-248" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-248"><a href="https://bsidesorlando.org/2014/category/news">News</a></li>
+<li id="menu-item-35" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-35"><a href="https://bsidesorlando.org/2014/about">About</a></li>
+<li id="menu-item-68" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-68"><a href="https://bsidesorlando.org/2014/sponsors">Sponsors</a></li>
+<li id="menu-item-23" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-23"><a href="https://bsidesorlando.org/2014/contribute">Contribute</a></li>
+<li id="menu-item-63" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-63"><a href="https://bsidesorlando.org/2014/schedule">Schedule</a></li>
+<li id="menu-item-199" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-199"><a href="https://bsidesorlando.org/2014/events">Events</a></li>
+<li id="menu-item-36" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-36"><a href="https://bsidesorlando.org/2014/location">Venue</a></li>
+<li id="menu-item-81" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-81"><a href="https://bsidesorlando.org/2014/cfp">CFP</a></li>
+<li id="menu-item-204" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-204"><a href="http://bsidesorl.eventbrite.com">Tickets</a></li>
+</ul>										<div class="clear"></div>
+					<div class="menubarbottom"></div>
+				</div>
+				<div class="menuwrapp_mobile">
+						<a class="mobilemenu_toggle" href="#" >Menu</a>
+												   <ul class="menu_mobile"><li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-16"><a href="https://bsidesorlando.org/2014/">Home</a></li>
+<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-248"><a href="https://bsidesorlando.org/2014/category/news">News</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-35"><a href="https://bsidesorlando.org/2014/about">About</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-68"><a href="https://bsidesorlando.org/2014/sponsors">Sponsors</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-23"><a href="https://bsidesorlando.org/2014/contribute">Contribute</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-63"><a href="https://bsidesorlando.org/2014/schedule">Schedule</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-199"><a href="https://bsidesorlando.org/2014/events">Events</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-36"><a href="https://bsidesorlando.org/2014/location">Venue</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-81"><a href="https://bsidesorlando.org/2014/cfp">CFP</a></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-204"><a href="http://bsidesorl.eventbrite.com">Tickets</a></li>
+</ul>										</div>
+				<div class="clear"></div>
+			</div> 
+		</div>		<div id="content">
+			<div class="center">
+				<div class="columnwrapp pagesidebar innerpage nosidebar">
+					 					 <div class="pagecontent">
+					     <ul class="singlecontent">
+						 						 						    <li id="post-343" class="post-343 post type-post status-publish format-standard hentry category-speakers">
+								<h2>Alex Kirk &#8211; Snort Rules Writing</h2>
+                                								<p><h3>Bio</h3>
+<p>Alex Kirk is a Security Engineer for Sourcefire (now a part of Cisco) covering the southeast US. Previously, he spent 9.5 years with the company&#8217;s Vulnerability Research Team, where he focused on Snort signature writing, packet/vulnerability/malware analysis, etc.; in his last 4 years there, Alex ran the VRT&#8217;s intelligence-sharing programs. He contributed a pair of Snort-related chapters to &#8220;Practical Intrusion Analysis: Prevention and Detection for the Twenty-First Century,&#8221; and was a regular contributor to the widely-read VRT blog (http://vrt-blog.snort.org/). He speaks at conferences worldwide on topics as diverse as &#8220;Malware Mythbusting&#8221; and &#8220;Reducing 0-Day Exposure Through Information-Sharing&#8221;, at venues including FIRST, Ekoparty, H2HC, HITB Malaysia, Ruxcon, CARO, You Sh0t the Sheriff, and of course other B-Sides locations.</p>
+<h3>Abstract</h3>
+<p>I take four different types of exploits, commonly seen in the wild today, demonstrate the logic necessary to detect them, and then show how to express that logic in the form of Snort rules. The material is designed to appeal to both the novice and intermediate Snort rule writer &#8211; no previous experience is necessary, but more advanced topics are also covered for current IDS analysts. The talk is at its best when the audience is asking questions and being interactive, so please, come in and join me!</p>
+</p>
+								
+                            </li>								
+						 						 </ul>
+						 					 </div>	
+					 				</div>
+				<div class="clear">&nbsp;</div>
+			</div>
+		</div>
+		<div id="footer">
+			<div class="center">
+			    <div class="column4">
+											<h3>Can I get CPE?</h3>			<div class="textwidget"><p>You absolutely can! Follow this <a href="wp-content/uploads/2013/11/CPEPaperwork.pdf" class="underline">link to get your attendance form</a>. Please be sure to bring a signed copy to the event.</p>
+</div>
+											</div>
+				<div class="column4">
+											<h3>When and Where?</h3>			<div class="textwidget"><p>April 5-6, 2014<br />
+<a href="location">8001 International Drive<br />
+Orlando, FL 32819</a></p>
+</div>
+											</div>
+				<div class="column4">
+											<h3>Call for papers!</h3>			<div class="textwidget">Wide open! Go <a href="cfp">sign up</a> to be a presenter! If you think it's cool, we would too.</div>
+											</div>
+				<div class="column4">
+											<h3>Social &#038; Contact</h3>			<div class="textwidget"><a href="https://www.facebook.com/BsidesORL"><img src="https://bsidesorlando.org/2014/wp-content/uploads/2013/11/facebook.png"></a>&nbsp;
+<a href="https://twitter.com/BsidesORL"><img src="https://bsidesorlando.org/2014/wp-content/uploads/2013/11/twitter.png"></a>&nbsp;
+<a href="mailto:info@bsidesorlando.org"><img src="https://bsidesorlando.org/2014/wp-content/uploads/2013/11/email.png"></a></div>
+											</div>
+			</div>
+			<div class="copyright">
+				<p class="center">Copyright © 2013 Security B-Sides Orlando & Jonathan Singer</p>
+			</div> 
+		</div> 
+	</div> 
+<!-- WP-TopBar_5.30 :: DB: 5.07 :: Number of TopBars Selected: 0 :: Rotate TopBars: no -->
+<script type='text/javascript' src='https://bsidesorlando.org/2014/wp-content/themes/hannari/js/main.js?ver=1.0'></script>
+		
+</body>
+</html>
